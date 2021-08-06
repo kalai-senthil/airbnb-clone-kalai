@@ -6,10 +6,10 @@ function InfoCard({ res }) {
   const { img, total, location, star, title, price, description, lat, long } =
     res;
   return (
-    <div className="flex py-7 px-2 pr-4 border-b cursor-pointer hover:opacity-80 hover:shadow-lg transition duration-150 ease-out first:border-t">
+    <div className="flex py-7 px-2 pr-4 border-b cursor-pointer hover:shadow-lg transition hover:rounded-xl duration-150 ease-out first:border-t">
       <div className="relative h-24 w-40 md:h-52 md:w-80 flex-shrink-0">
         <Image
-          className="rounded-2xl"
+          className="rounded-2xl hover:scale-95 transform transition duration-150 ease-out"
           src={img}
           objectFit="cover"
           layout="fill"
@@ -25,7 +25,7 @@ function InfoCard({ res }) {
         <p className="pt-2 text-sm text-gray-500 flex-grow">{description}</p>
         <div className="flex justify-between items-end pt-5">
           <p className="flex items-center">
-            <StarIcon className="h-5 text-red-500" />
+            <StarIcon className="h-5 text-red-500 hover:scale-110 hover:opacity-75" />
             {star}
           </p>
           <div>
