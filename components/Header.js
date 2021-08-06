@@ -1,14 +1,41 @@
 import Image from "next/image";
+import Head from "next/head";
+import { useRouter } from "next/router";
 import {
   GlobeAltIcon,
   MenuIcon,
   SearchIcon,
   UserCircleIcon,
+  UsersIcon,
 } from "@heroicons/react/solid";
-function Header() {
+import "react-date-range/dist/styles.css";
+import "react-date-range/dist/theme/default.css";
+import { DateRangePicker } from "react-date-range";
+import { useState } from "react";
+function Header({ placeholder }) {
+  const router = useRouter();
+  const [searchInput, setSearchInput] = useState("");
+  const [startDate, setStartDate] = useState(new Date());
+  const [endDate, setEndDate] = useState(new Date());
+  const [numberOfGuests, setNumberOfGuests] = useState(1);
+  function handleSelect(select) {
+    setStartDate(select.Selection.startDate);
+    setEndDate(select.Selection.endDate);
+  }
+  const selectionRange = {
+    startDate: startDate,
+    endDate: endDate,
+    key: "Selection",
+  };
   return (
     <header className="sticky top-0 z-50 grid grid-cols-3 bg-white shadow-md p-5 md:px-10">
-      <div className="relative flex h-10 items-center cursor-pointer my-auto">
+      <Head>
+        <title>Airbnb Clone -Search </title>
+      </Head>
+      <div
+        onClick={() => router.push("/")}
+        className="relative flex h-10 items-center cursor-pointer my-auto"
+      >
         <Image
           objectFit="contain"
           objectPosition="left"
@@ -18,8 +45,10 @@ function Header() {
       </div>
       <div className="flex items-center md:border-2 rounded-full p-2 md:shadow-sm">
         <input
+          value={searchInput}
+          onChange={(e) => setSearchInput(e.target.value)}
           type="text"
-          placeholder="Start your search"
+          placeholder={placeholder || "Start your search"}
           className="pl-5 bg-transparent outline-none flex-1 text-sm text-gray-600 placeholder-gray-400"
         />
         <SearchIcon className="h-8 md:mx-auto text-white cursor-pointer bg-red-400 rounded-full p-2 hidden md:inline-flex" />
@@ -32,6 +61,53 @@ function Header() {
           <UserCircleIcon className="h-6" />
         </div>
       </div>
+      {searchInput && (
+        <div className="flex flex-col col-span-3 mx-auto">
+          <DateRangePicker
+            rangeColors={["#FD5861"]}
+            ranges={[selectionRange]}
+            minDate={new Date()}
+            onChange={handleSelect}
+          />
+          <div className="flex items-center border-b mb-4">
+            <h2 className="font-semibold text-2xl pl-2 flex-grow">
+              Number of Guests
+            </h2>
+            <UsersIcon className="h-5" />
+            <input
+              value={numberOfGuests}
+              onChange={(e) => setNumberOfGuests(e.target.valueAsNumber)}
+              type="number"
+              min={1}
+              className="w-12 pl-2 text-lg outline-none text-red-400"
+            />
+          </div>
+          <div className="flex">
+            <button
+              className="flex-grow text-gray-500"
+              onClick={() => setSearchInput("")}
+            >
+              Cancel
+            </button>
+            <button
+              onClick={() =>
+                router.push({
+                  pathname: "/search",
+                  query: {
+                    location: searchInput,
+                    startDate: startDate.toISOString(),
+                    endDate: endDate.toISOString(),
+                    numberOfGuests,
+                  },
+                })
+              }
+              className="flex-grow text-red-400"
+            >
+              Search
+            </button>
+          </div>
+        </div>
+      )}
     </header>
   );
 }
